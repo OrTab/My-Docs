@@ -1,0 +1,11 @@
+.header {
+    & ul {
+        display: flex;
+        list-style: none;
+        gap: 10px;
+        li a {
+            text-decoration: none;
+            color: $black;
+        }
+    }
+}
