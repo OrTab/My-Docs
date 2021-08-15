@@ -7,7 +7,12 @@ var usersMapById = {}
 
 
 function connectSockets(http, session) {
-    gIo = require('socket.io')(http);
+    gIo = require('socket.io')(http, {
+        cors: {
+            origin: 'http://localhost:3000',
+            methods: ['GET', 'POST']
+        }
+    });
     const sharedSession = require('express-socket.io-session');
 
     gIo.use(sharedSession(session, {
@@ -17,9 +22,6 @@ function connectSockets(http, session) {
     gIo.on('connection', socket => {
         console.log('someoneConnect');
         gSocketBySessionIdMap[socket.handshake.sessionID] = socket
-        setTimeout(() => {
-            socket.emit('sendMsg', 'hey')
-        },1000)
         socket.on('disconnect', socket => {
             console.log('Someone disconnected')
             if (socket.handshake) {
@@ -34,6 +36,9 @@ function connectSockets(http, session) {
             socket.join(boardId)
             socket.boardId = boardId
             console.log('room', socket.boardId);
+        })
+        socket.on('quill-changed', delta => {
+            socket.broadcast.emit('update-quill', delta)
         })
 
         socket.on('userSocket', user => {

@@ -1,13 +1,11 @@
 import io from 'socket.io-client'
-import { httpService } from './httpService'
 
 
-const baseUrl = (process.env.NODE_ENV === 'production') ? 'https://sunday-app-2021.herokuapp.com/' : '//localhost:3030'
+const baseUrl = (process.env.NODE_ENV === 'production') ? 'https://' : '//localhost:3030'
 export const socketService = createSocketService()
 // export const socketService = createDummySocketService()
 
 
-var socketIsReady = false;
 // socketService.setup()
 
 
@@ -17,7 +15,6 @@ function createSocketService() {
     setup() {
       if (socket) return
       socket = io(baseUrl, { reconnection: false })
-      socketIsReady = true;
     },
     on(eventName, cb) {
       if (!socket) socketService.setup()
@@ -34,7 +31,6 @@ function createSocketService() {
     },
     terminate() {
       socket = null
-      socketIsReady = false
     }
   }
   return socketService
